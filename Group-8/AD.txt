@@ -7,17 +7,16 @@ void main()
 {
 
     char str[35];                            //DECLARATION OF STRING
-    printf("Enter the string");              
+    printf("Enter the string");
     scanf("%s",str);                         //SCANNING THE DATA IN STRING TYPE
     int size=sizeof(str)/sizeof(str[0]);     //FINDING THE SIZE OF STR
     printf("%d\n",size);
     int i,j,c1=0,c2=0,c3=1;
 
     /*
-    LOGIC FOR COUNTINF THE ALPHABETS AND NUMBERS
-LOGIC FOR FREQUENCY OF ALPHABETS AND NUMBERS
+    LOGIC FOR
     */
-    
+
     for(i=0;str[i];i++)
     {
         if(str[i]>='A' && str[i]<='Z')
@@ -34,17 +33,12 @@ LOGIC FOR FREQUENCY OF ALPHABETS AND NUMBERS
 
     for(i=0;str[i];i++)
     {
-        c3=1;
-        for(j=i+1;str[j];j++)
+
+        for(j=i+1,c3=1;str[j];j++)
         {
             if(str[i]==str[j])
             {
                 c3++;
-                for(int k=j+1;str[k];k++)
-                {
-                    str[j]=str[k];
-                }
-                j--;
             }
         }
 
