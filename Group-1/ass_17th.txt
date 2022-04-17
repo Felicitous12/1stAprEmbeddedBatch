@@ -1,0 +1,44 @@
+/*
+Authors Name : Sharada , Siva
+Date : 17/04/2022
+Purpose : Write a Program to count number of alphabets, numbers and frequency of alphabets, numbers in a given input
+*/
+#include<stdio.h>
+void main()
+{
+    int l=0,alpha_count = 0, number_count = 0,frequency=0;
+    char str[100]="JOIN25FELICITOUS123BRIGOSHA5678";
+    char str1[40];
+    for(int i=0;str[i] != '\0';i++)
+    {
+        if((str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z') )//condition checks for alphabets
+                alpha_count++;
+        else if(str[i] >= '0' && str[i] <= '9')//condition checks for numeric characters
+            number_count++;
+    }
+    printf("Count of alphabets : %d\n",alpha_count);
+    printf("Count of numeric characters : %d\n",number_count);
+    //to find frequency of characters
+    for(int i=0;str[i] != '\0';i++)
+    {
+        if(str[i] >= '0' && str[i] <= '9' ||(str[i] >= 'A' && str[i] <= 'Z') || (str[i] >= 'a' && str[i] <= 'z') )//condition checks for characters
+        {
+            for(int k=0;str[k] != '\0';k++)
+            {
+                if(str[i] != str1[k])
+                    str1[l]=str[k];
+                    l++;
+            }
+        }
+    }
+    for(int i=0;str[i] != '\0';i++)
+    {
+        for(int j=0;str1[j] != '\0';j++)
+            {
+                if(str[i]==str1[j])
+                    frequency++;
+            }
+            printf("Frequency of the character %c is %d\n",str[i],frequency);
+            frequency=0;
+    }
+}
