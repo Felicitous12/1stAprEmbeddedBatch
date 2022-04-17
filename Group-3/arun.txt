@@ -1,0 +1,38 @@
+//file header
+/*arunkumar p and mahesh
+date :17/04/2022
+purpose:WTP to count number of alphabets and numbers and frequency of both
+*/
+
+
+
+#include<stdio.h>
+void main()
+{
+
+
+char s[30];
+int i,j,c=0,l=0,digit=0,k;
+printf("enter the string..\n");
+scanf("%s",s);
+
+printf("%s\n",s);
+for(k=0;s[k];k++)
+if(s[k]>='0' && '9')
+
+    digit++;
+    
+printf("%d\n",digit);
+for(i=0;s[i];i++)
+c++;
+printf("%d\n",c);
+char ch;
+printf("enter the char..\n");
+scanf(" %c",&ch);
+for(j=0;s[j];j++)
+if(s[j]==ch)
+    l++;
+printf("%d\n",l);
+
+}
+
