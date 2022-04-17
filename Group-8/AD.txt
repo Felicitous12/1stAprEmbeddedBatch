@@ -1,0 +1,53 @@
+/*
+  AUTHORS OF FILE : DHARANI AND ADIL AHMED
+  DATE : 17-04-2022
+  PURPOSE : WAP TO COUNT NUMBER OF ALPHABETS AND NUMBERS AND FRE OF ALPHABETS AND NUMBERS */
+#include<stdio.h>
+void main()
+{
+
+    char str[35];                            //DECLARATION OF STRING
+    printf("Enter the string");              
+    scanf("%s",str);                         //SCANNING THE DATA IN STRING TYPE
+    int size=sizeof(str)/sizeof(str[0]);     //FINDING THE SIZE OF STR
+    printf("%d\n",size);
+    int i,j,c1=0,c2=0,c3=1;
+
+    /*
+    LOGIC FOR COUNTINF THE ALPHABETS AND NUMBERS
+LOGIC FOR FREQUENCY OF ALPHABETS AND NUMBERS
+    */
+    
+    for(i=0;str[i];i++)
+    {
+        if(str[i]>='A' && str[i]<='Z')
+        {
+            c1++;
+        }
+        else if(str[i]>='0' && str[i]<='9')
+        {
+            c2++;
+        }
+    }
+    printf("ALPHABETS=%d  NUMBERS=%d\n",c1,c2);
+
+
+    for(i=0;str[i];i++)
+    {
+        c3=1;
+        for(j=i+1;str[j];j++)
+        {
+            if(str[i]==str[j])
+            {
+                c3++;
+                for(int k=j+1;str[k];k++)
+                {
+                    str[j]=str[k];
+                }
+                j--;
+            }
+        }
+
+     printf("%c is repeated %d times\n",str[i],c3);
+    }
+}
