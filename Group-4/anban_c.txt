@@ -1,2 +1,48 @@
-anban_k
-QWERTY
+/* NAME: ANBAN, CHANDRASHEKAR
+DATE :17/04/2022
+PURPOSE :WAP TO COUNT ALPHABETS,NUMBERS,AND FREQUENCY OF ALBHABETS,NUMBERS
+*/
+
+
+#include<stdio.h>
+void main()
+{
+    char a[25];
+    int i=0,c=0,n=0,ele,c1,n1,j,k;
+    //ele=sizeof a/sizeof a[0];
+    printf("enter the string");
+    //for(i=0;a[i];i++)
+   scanf("%s",a);
+   printf("%s\n",a);
+   printf("\n");
+   for(i=0;a[i];i++)
+   {
+       if(a[i]>='A' && a[i]<='Z'|| a[i]>='a' && a[i]<='z')
+       {
+           c++;
+       }
+       else if (a[i]>='0' && a[i]<='9')
+            {
+                n++;
+            }
+   }
+    printf("%d %d\n",c,n);
+
+    for(i=0;a[i];i++)
+    {
+    for(j=i+1;a[i];j++)
+    {
+        if(a[i]==a[j])
+        {
+            for(k=j;a[i];k++)
+            {
+                a[k]=a[k+1];
+            }
+            c1++;
+            n1++;
+        }
+
+    }
+    printf("%d %d\n",c1,n1);
+    }
+}
