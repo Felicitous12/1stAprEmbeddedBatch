@@ -1,0 +1,43 @@
+/*Author name:Naveen ; lakshmi;
+date : 17-04-2022
+purpose : to count alphabets */
+#include<stdio.h>
+#include<string.h>
+void main()
+{
+    //int a[]={'j','o','i','n','2','5','f','e','l','i','c','i','t','o','u','s','1','2','3','b','r','i','g','o','s','h','a','5','6','7','8'};
+    char b[]="join25felicitous123brigosha5678";
+    int i;
+    int count=0,count1=0;
+   /* int i,j,k,ele,count=0,count1=0;
+    ele=sizeof(a)/sizeof(a[0]);
+    for(i=0;i<ele;i++)
+    {
+        scanf("%c",&a[i]);
+    }
+     for(i=0;i<ele;i++)
+    {
+        printf("%c",a[i]);
+    }
+    */
+    for(i=0;b[i];i++)
+    {
+        if(b[i]>='a'&&b[i]<='z') //check alphabets
+        {
+            count++;
+           // printf("%d\n",count);
+        }
+    }
+
+    for(i=0;b[i];i++)
+    {
+        if(b[i]>='0' && b[i]<='9') //check numbers
+        {
+            count1++;
+            //printf("%d\n",count1);
+            }
+        }
+        printf("\n%d %d\n",count,count1);
+
+
+    }
