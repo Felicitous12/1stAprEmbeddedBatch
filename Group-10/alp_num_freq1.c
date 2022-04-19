@@ -1,5 +1,5 @@
 /* Author Name: G.Naresh
-    Date: 17/04/2022
+    Date: 19/04/2022
     purpose: c program */
 
 // WAP to count the no of alphabets and numbers also frequency of each character
