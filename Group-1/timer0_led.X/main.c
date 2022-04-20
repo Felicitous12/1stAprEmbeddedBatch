@@ -1,9 +1,8 @@
 /*
- * File:   main.c
- * Author: User
- *
- * Created on April 18, 2022, 9:46 AM
- */
+Authors Name : Sharada , Siva
+Date : 17/04/2022
+Purpose : Write a Program to generate a delay of 1 second and toggle led
+*/
 
 // PIC18F458 Configuration Bit Settings
 
