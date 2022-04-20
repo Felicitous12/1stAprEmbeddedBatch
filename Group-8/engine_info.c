@@ -1,4 +1,8 @@
-
+/*
+  AUTHORS OF FILE : DHARANI K R AND ADIL AHMED
+  DATE : 20-04-2022
+  PURPOSE : Write a program to store steering information, temperature information and engine RPM into a array.
+*/
 
 ///////////////////////////////////////// INPUT //////////////////////////////////////////////////////////////
 /*Information*/
