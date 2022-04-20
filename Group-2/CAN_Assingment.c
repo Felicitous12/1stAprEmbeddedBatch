@@ -1,4 +1,11 @@
 
+/*
+Author name:yugadharshini,kathirvannan
+Date :20-04-2022
+Purpose: getting streeing and engine info storing in byte and arranging in bit values*/
+
+
+
 
 ///////////////////////////////////////// INPUT //////////////////////////////////////////////////////////////
 /*Information*/
