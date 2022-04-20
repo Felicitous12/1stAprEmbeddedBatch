@@ -1,0 +1,77 @@
+[p GLOBOPT AUTOSTATIC IEEE_FLT IEEE_DBL LFSROK EMI_WORD ]
+[d version 1.1 ]
+[d edition pro ]
+[d chip 18F458 ]
+[d frameptr 4065 ]
+"4 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\fleq.c
+[v ___fleq __fleq `(b  1 e 0 0 ]
+"62 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\float.c
+[v ___ftpack __ftpack `(f  1 e 4 0 ]
+"86 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftadd.c
+[v ___ftadd __ftadd `(f  1 e 4 0 ]
+"54 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftdiv.c
+[v ___ftdiv __ftdiv `(f  1 e 4 0 ]
+"62 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftmul.c
+[v ___ftmul __ftmul `(f  1 e 4 0 ]
+"19 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftsub.c
+[v ___ftsub __ftsub `(f  1 e 4 0 ]
+"10 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\sprcadd.c
+[v ___fladd __fladd `(d  1 e 4 0 ]
+"245
+[v ___flsub __flsub `(d  1 e 4 0 ]
+"11 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\sprcdiv.c
+[v ___fldiv __fldiv `(d  1 e 4 0 ]
+"8 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\sprcmul.c
+[v ___flmul __flmul `(d  1 e 4 0 ]
+"15 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\Umul32.c
+[v ___lmul __lmul `(ul  1 e 4 0 ]
+"91 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\Umul64.c
+[v ___omul __omul `(uo  1 e 8 0 ]
+"65 C:\Users\User\MPLABXProjects\timer2_led.X\isr.c
+[v _isr isr `IIH(v  1 e 1 0 ]
+"65 C:\Users\User\MPLABXProjects\timer2_led.X\main.c
+[v _init_config init_config `(v  1 s 1 init_config ]
+"72
+[v _main main `(v  1 e 1 0 ]
+"65 C:\Users\User\MPLABXProjects\timer2_led.X\timer2.c
+[v _init_timer0 init_timer0 `(v  1 e 1 0 ]
+"10242 C:/Program Files/Microchip/MPLABX/v6.00/packs/Microchip/PIC18Fxxxx_DFP/1.3.36/xc8\pic\include\proc\pic18f458.h
+[v _PORTA PORTA `VEuc  1 e 1 @3968 ]
+"11524
+[v _TRISA TRISA `VEuc  1 e 1 @3986 ]
+"15856
+[v _TMR0 TMR0 `VEus  1 e 2 @4054 ]
+"17240
+[v _GIE GIE `VEb  1 e 0 @32663 ]
+"17762
+[v _PSA PSA `VEb  1 e 0 @32427 ]
+"17813
+[v _RA0 RA0 `VEb  1 e 0 @31744 ]
+"19835
+[v _T0CS T0CS `VEb  1 e 0 @32429 ]
+"19940
+[v _TMR0IE TMR0IE `VEb  1 e 0 @32661 ]
+"19943
+[v _TMR0IF TMR0IF `VEb  1 e 0 @32658 ]
+"72 C:\Users\User\MPLABXProjects\timer2_led.X\main.c
+[v _main main `(v  1 e 1 0 ]
+{
+"79
+} 0
+"65
+[v _init_config init_config `(v  1 s 1 init_config ]
+{
+"71
+} 0
+"65 C:\Users\User\MPLABXProjects\timer2_led.X\timer2.c
+[v _init_timer0 init_timer0 `(v  1 e 1 0 ]
+{
+"74
+} 0
+"65 C:\Users\User\MPLABXProjects\timer2_led.X\isr.c
+[v _isr isr `IIH(v  1 e 1 0 ]
+{
+"67
+[v isr@count count `ui  1 s 2 count ]
+"80
+} 0
