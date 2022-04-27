@@ -1,0 +1,134 @@
+[p GLOBOPT AUTOSTATIC IEEE_FLT IEEE_DBL LFSROK EMI_WORD ]
+[d version 1.1 ]
+[d edition pro ]
+[d chip 18F458 ]
+[d frameptr 4065 ]
+"4 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\fleq.c
+[v ___fleq __fleq `(b  1 e 0 0 ]
+"62 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\float.c
+[v ___ftpack __ftpack `(f  1 e 4 0 ]
+"86 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftadd.c
+[v ___ftadd __ftadd `(f  1 e 4 0 ]
+"54 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftdiv.c
+[v ___ftdiv __ftdiv `(f  1 e 4 0 ]
+"62 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftmul.c
+[v ___ftmul __ftmul `(f  1 e 4 0 ]
+"19 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\ftsub.c
+[v ___ftsub __ftsub `(f  1 e 4 0 ]
+"10 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\sprcadd.c
+[v ___fladd __fladd `(d  1 e 4 0 ]
+"245
+[v ___flsub __flsub `(d  1 e 4 0 ]
+"11 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\sprcdiv.c
+[v ___fldiv __fldiv `(d  1 e 4 0 ]
+"8 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\sprcmul.c
+[v ___flmul __flmul `(d  1 e 4 0 ]
+"15 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\Umul32.c
+[v ___lmul __lmul `(ul  1 e 4 0 ]
+"91 C:\Program Files\Microchip\xc8\v2.36\pic\sources\c99\common\Umul64.c
+[v ___omul __omul `(uo  1 e 8 0 ]
+"64 C:\Users\User\MPLABXProjects\can_mes.X\isr.c
+[v _isr isr `IIH(v  1 e 1 0 ]
+"62 C:\Users\User\MPLABXProjects\can_mes.X\main.c
+[v _baud_rate_setting baud_rate_setting `(v  1 e 1 0 ]
+"69
+[v _transmit_buffer transmit_buffer `(v  1 e 1 0 ]
+"87
+[v _main main `(v  1 e 1 0 ]
+"123
+[v _sec_delay sec_delay `(v  1 e 1 0 ]
+"5746 C:/Program Files/Microchip/MPLABX/v6.00/packs/Microchip/PIC18Fxxxx_DFP/1.3.36/xc8\pic\include\proc\pic18f458.h
+[v _TXB0CON TXB0CON `VEuc  1 e 1 @3904 ]
+"5836
+[v _TXB0SIDH TXB0SIDH `VEuc  1 e 1 @3905 ]
+"5948
+[v _TXB0SIDL TXB0SIDL `VEuc  1 e 1 @3906 ]
+"6264
+[v _TXB0DLC TXB0DLC `VEuc  1 e 1 @3909 ]
+"6342
+[v _TXB0D0 TXB0D0 `VEuc  1 e 1 @3910 ]
+"6404
+[v _TXB0D1 TXB0D1 `VEuc  1 e 1 @3911 ]
+"6466
+[v _TXB0D2 TXB0D2 `VEuc  1 e 1 @3912 ]
+"6528
+[v _TXB0D3 TXB0D3 `VEuc  1 e 1 @3913 ]
+"9676
+[v _CANSTAT CANSTAT `VEuc  1 e 1 @3950 ]
+"9749
+[v _CANCON CANCON `VEuc  1 e 1 @3951 ]
+"9827
+[v _BRGCON1 BRGCON1 `VEuc  1 e 1 @3952 ]
+"9889
+[v _BRGCON2 BRGCON2 `VEuc  1 e 1 @3953 ]
+"9960
+[v _BRGCON3 BRGCON3 `VEuc  1 e 1 @3954 ]
+"9999
+[v _CIOCON CIOCON `VEuc  1 e 1 @3955 ]
+"10242
+[v _PORTA PORTA `VEuc  1 e 1 @3968 ]
+"11524
+[v _TRISA TRISA `VEuc  1 e 1 @3986 ]
+"11722
+[v _TRISB TRISB `VEuc  1 e 1 @3987 ]
+"15285
+[v _PR2 PR2 `VEuc  1 e 1 @4043 ]
+"17240
+[v _GIE GIE `VEb  1 e 0 @32663 ]
+"17732
+[v _PEIE PEIE `VEb  1 e 0 @32662 ]
+"17813
+[v _RA0 RA0 `VEb  1 e 0 @31744 ]
+"17834
+[v _RB0 RB0 `VEb  1 e 0 @31752 ]
+"18032
+[v _RB2 RB2 `VEb  1 e 0 @31754 ]
+"18035
+[v _RB3 RB3 `VEb  1 e 0 @31755 ]
+"19886
+[v _T2CKPS0 T2CKPS0 `VEb  1 e 0 @32336 ]
+"19889
+[v _T2CKPS1 T2CKPS1 `VEb  1 e 0 @32337 ]
+"19967
+[v _TMR2IE TMR2IE `VEb  1 e 0 @31977 ]
+"19970
+[v _TMR2IF TMR2IF `VEb  1 e 0 @31985 ]
+"19976
+[v _TMR2ON TMR2ON `VEb  1 e 0 @32338 ]
+"19997
+[v _TOUTPS0 TOUTPS0 `VEb  1 e 0 @32339 ]
+"20000
+[v _TOUTPS1 TOUTPS1 `VEb  1 e 0 @32340 ]
+"20003
+[v _TOUTPS2 TOUTPS2 `VEb  1 e 0 @32341 ]
+"20006
+[v _TOUTPS3 TOUTPS3 `VEb  1 e 0 @32342 ]
+"20441
+[v _TXB0REQ TXB0REQ `VEb  1 e 0 @31235 ]
+"87 C:\Users\User\MPLABXProjects\can_mes.X\main.c
+[v _main main `(v  1 e 1 0 ]
+{
+"121
+} 0
+"69
+[v _transmit_buffer transmit_buffer `(v  1 e 1 0 ]
+{
+"85
+} 0
+"123
+[v _sec_delay sec_delay `(v  1 e 1 0 ]
+{
+"145
+} 0
+"62
+[v _baud_rate_setting baud_rate_setting `(v  1 e 1 0 ]
+{
+"68
+} 0
+"64 C:\Users\User\MPLABXProjects\can_mes.X\isr.c
+[v _isr isr `IIH(v  1 e 1 0 ]
+{
+"66
+[v isr@count count `ui  1 s 2 count ]
+"79
+} 0
