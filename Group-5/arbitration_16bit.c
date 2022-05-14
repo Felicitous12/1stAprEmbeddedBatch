@@ -13,7 +13,7 @@ void check_arb(unsigned int id1,unsigned int id2)   // defining the function che
 }
 int main()                                         //starting of main function
 {
-    unsigned int id1,id2;                          //declaring the required variables
+    unsigned short int id1,id2;                          //declaring the required variables
     printf("enter 1st identifier: 0x");            //scanning the first id
     scanf("%x",&id1);
     printf("enter 2nd identifier: 0x");
