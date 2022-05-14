@@ -1,0 +1,323 @@
+/*Author : Arun Kumar, Yugadharshini, Abhishek, Dinesh, Sharada
+Purpose : To receive the data from Engine Management Node (Message ID = 0x042) and 
+ * check byte 1 value and transmit the data to Lightning System (Message ID = 0x628) byte 1
+ * To receive the data from Engine Management Node (Message ID = 0x042) and Airbag General Node(Message ID = 0x100) 
+ * check value and transmit the data to Immobilizer Node(Message ID = 0x100)*/
+
+// PIC18F458 Configuration Bit Settings
+
+// 'C' source line config statements
+
+// CONFIG1H
+#pragma config OSC = HS         // Oscillator Selection bits (HS oscillator)
+#pragma config OSCS = OFF       // Oscillator System Clock Switch Enable bit (Oscillator system clock switch option is disabled (main oscillator is source))
+
+// CONFIG2L
+#pragma config PWRT = OFF       // Power-up Timer Enable bit (PWRT disabled)
+#pragma config BOR = ON         // Brown-out Reset Enable bit (Brown-out Reset enabled)
+#pragma config BORV = 25        // Brown-out Reset Voltage bits (VBOR set to 2.5V)
+
+// CONFIG2H
+#pragma config WDT = OFF        // Watchdog Timer Enable bit (WDT disabled (control is placed on the SWDTEN bit))
+#pragma config WDTPS = 128      // Watchdog Timer Postscale Select bits (1:128)
+
+// CONFIG4L
+#pragma config STVR = ON        // Stack Full/Underflow Reset Enable bit (Stack Full/Underflow will cause Reset)
+#pragma config LVP = ON         // Low-Voltage ICSP Enable bit (Low-Voltage ICSP enabled)
+
+// CONFIG5L
+#pragma config CP0 = OFF        // Code Protection bit (Block 0 (000200-001FFFh) not code protected)
+#pragma config CP1 = OFF        // Code Protection bit (Block 1 (002000-003FFFh) not code protected)
+#pragma config CP2 = OFF        // Code Protection bit (Block 2 (004000-005FFFh) not code protected)
+#pragma config CP3 = OFF        // Code Protection bit (Block 3 (006000-007FFFh) not code protected)
+
+// CONFIG5H
+#pragma config CPB = OFF        // Boot Block Code Protection bit (Boot Block (000000-0001FFh) not code protected)
+#pragma config CPD = OFF        // Data EEPROM Code Protection bit (Data EEPROM not code protected)
+
+// CONFIG6L
+#pragma config WRT0 = OFF       // Write Protection bit (Block 0 (000200-001FFFh) not write protected)
+#pragma config WRT1 = OFF       // Write Protection bit (Block 1 (002000-003FFFh) not write protected)
+#pragma config WRT2 = OFF       // Write Protection bit (Block 2 (004000-005FFFh) not write protected)
+#pragma config WRT3 = OFF       // Write Protection bit (Block 3 (006000-007FFFh) not write protected)
+
+// CONFIG6H
+#pragma config WRTC = OFF       // Configuration Register Write Protection bit (Configuration registers (300000-3000FFh) not write protected)
+#pragma config WRTB = OFF       // Boot Block Write Protection bit (Boot Block (000000-0001FFh) not write protected)
+#pragma config WRTD = OFF       // Data EEPROM Write Protection bit (Data EEPROM not write protected)
+
+// CONFIG7L
+#pragma config EBTR0 = OFF      // Table Read Protection bit (Block 0 (000200-001FFFh) not protected from Table Reads executed in other blocks)
+#pragma config EBTR1 = OFF      // Table Read Protection bit (Block 1 (002000-003FFFh) not protected from Table Reads executed in other blocks)
+#pragma config EBTR2 = OFF      // Table Read Protection bit (Block 2 (004000-005FFFh) not protected from Table Reads executed in other blocks)
+#pragma config EBTR3 = OFF      // Table Read Protection bit (Block 3 (006000-007FFFh) not protected from Table Reads executed in other blocks)
+
+// CONFIG7H
+#pragma config EBTRB = OFF      // Boot Block Table Read Protection bit (Boot Block (000000-0001FFh) not protected from Table Reads executed in other blocks)
+
+// #pragma config statements should precede project file includes.
+// Use project enums instead of #define for ON and OFF.
+
+#include <xc.h>
+/*Array declaration*/
+unsigned char can_frame_srs[11];
+unsigned char can_frame_enm[11];
+unsigned flag_high, flag_low;  /*Variable Declaration*/
+#define _XTAL_FREQ 20000000
+#define ENABLE 1
+#define DISABLE 0
+
+static void can_init(void)  /*function definition*/
+{
+    TRISBbits.RB3 = ENABLE;             /*configured as CAN_RX (input)*/
+    TRISBbits.RB2 = DISABLE;             /*configured as CAN_TX (output)*/
+    GIE = ENABLE;  /*Enable global interrupt*/    
+    PEIE = ENABLE;   /*Enable peripheral interrupt*/
+    PIE3bits.RXB0IE = ENABLE; /*Enable receiver buffer 0 interrupt*/
+    IPR3bits.RXB0IP = ENABLE; /*Enable receiver buffer 0 as high priority*/
+    CANCON |= 0x80;          /*requests configuration mode*/
+    while(CANSTAT != 0x80);        /*condition checks for configuration mode*/
+    /* Baud rate is 250kHz*/    
+    BRGCON1 = 0xC1;     /*Sync Jump Width = 4;Baud Rate Pre scaler bits = 4*/
+    BRGCON2 = 0xAE;         /*Phase Segment 1 Time = 6, Propagation Time = 7*/
+    BRGCON3 = 0x45;          /*Phase Segment 2 Time = 6*/
+    CIOCON = 0x20;  /*CANTX pin will drive VDD when recessive*/
+    CANCON = 0x08;/*requests normal mode */
+}
+static void can_rx_init() /*function definition*/
+{
+    /*ENABLE MASK = 0x00*/
+    RXM0SIDH = 0X00;    
+    RXM0SIDL = 0X00;
+                     
+    /* ENABLE FILTER 0 = 0x00*/
+    RXF0SIDH = 0X00;
+    RXF0SIDL = 0X00;
+
+    /* ENABLE FILTER 1 = 0x00*/
+    RXF1SIDH = 0X00;
+    RXF1SIDL = 0X00;
+        
+    /* SET RECEIEVE MODE FOR BUFFER0 */
+    RXB0CON = 0X00; /*Receive all valid messages,  No Receive Buffer 0 overflow to Receive Buffer 1 */
+
+}
+
+static void can_rx_1() /*function definition*/
+{   
+    CANCON = 0x0C;     /*requests normal mode and receiver buffer 0*/    
+    can_frame_enm[0] = RXB0D5;          /*Store the received Data Buffer 5 value to array*/
+    can_frame_enm[1] = RXB0D6;            /*Store the received Data Buffer 6 value to array*/
+    can_frame_enm[2] = RXB0D7;          /*Store the received Data Buffer 7 value to array*/
+    can_frame_enm[3] = RXB0D0;   /*Store the received Data Buffer 0 value to array*/
+    can_frame_enm[4] = RXB0D1;      /*Store the received Data Buffer 1 value to array*/
+    can_frame_enm[5] = RXB0D2;   /*Store the received Data Buffer 2 value to array*/
+    can_frame_enm[6] = RXB0D3; /*Store the received Data Buffer 3 value to array*/
+    can_frame_enm[7] = RXB0D4; /*Store the received Data Buffer 4 value to array*/
+    can_frame_enm[8] = RXB0DLC;  /*Store the received DLC value to array*/
+    can_frame_enm[9] = RXB0SIDL;     /*Store the received Standard Identifier  value to array*/
+    can_frame_enm[10] = RXB0SIDH;     /*Store the received Standard Identifier  value to array*/
+    RXB0CONbits.RXB0FUL = 0;       /*Receive buffer is open to receive a new message*/
+}
+static void can_rx_2() /*function definition*/
+{ 
+    CANCON = 0x0C;     /*requests normal mode and receiver buffer 0*/ 
+    can_frame_srs[0] = RXB0D0;       /*Store the received Data Buffer 0 value to array*/
+    can_frame_srs[1] = RXB0D1;     /*Store the received Data Buffer 1 value to array*/
+    can_frame_srs[2] = RXB0D2;     /*Store the received Data Buffer 2 value to array*/ 
+    can_frame_srs[3] = RXB0D3;  /*Store the received Data Buffer 3 value to array*/
+    can_frame_srs[4] = RXB0D4;      /*Store the received Data Buffer 4 value to array*/  
+    can_frame_srs[5] = RXB0D5;     /*Store the received Data Buffer 5 value to array*/ 
+    can_frame_srs[6] = RXB0D6;     /*Store the received Data Buffer 6 value to array*/ 
+    can_frame_srs[7] = RXB0D7;    /*Store the received Data Buffer 7 value to array*/
+    can_frame_srs[8] = RXB0DLC;     /*Store the received DLC value to array*/ 
+    can_frame_srs[9] = RXB0SIDL;  /*Store the received Standard Identifier  value to array*/
+    can_frame_srs[10] = RXB0SIDH;     /*Store the received Standard Identifier  value to array*/
+    RXB0CONbits.RXB0FUL = 0;   /*Receive buffer is open to receive a new message*/
+}
+static void can_rx_3() /*function definition*/
+{ 
+    static unsigned char can_frame_dummy[11]; /*Array declaration*/
+    CANCON = 0x0C;     /*requests normal mode and receiver buffer 0*/ 
+    can_frame_dummy[0] = RXB0D0;  /*Store the received Data Buffer 0 value to array*/
+    can_frame_dummy[1] = RXB0D1;  /*Store the received Data Buffer 1 value to array*/
+    can_frame_dummy[2] = RXB0D2;  /*Store the received Data Buffer 2 value to array*/
+    can_frame_dummy[3] = RXB0D3;   /*Store the received Data Buffer 3 value to array*/
+    can_frame_dummy[4] = RXB0D4;   /*Store the received Data Buffer 4 value to array*/ 
+    can_frame_dummy[5] = RXB0D5;    /*Store the received Data Buffer 5 value to array*/
+    can_frame_dummy[6] = RXB0D6;     /*Store the received Data Buffer 6 value to array*/ 
+    can_frame_dummy[7] = RXB0D7;     /*Store the received Data Buffer 7 value to array*/
+    can_frame_dummy[8] = RXB0DLC;   /*Store the received DLC value to array*/ 
+    can_frame_dummy[9] = RXB0SIDL;   /*Store the received Standard Identifier  value to array*/
+    can_frame_dummy[10] = RXB0SIDH;  /*Store the received Standard Identifier  value to array*/
+    RXB0CONbits.RXB0FUL = 0; /*Receive buffer is open to receive a new message*/
+}
+static void can_tx_1(void) /*function definition*/
+{
+    CANCON = 0x08;/*requests normal mode and transmit buffer 0*/
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB0CONbits.TXREQ == 0 && CANCON == 0x08) 
+    {
+       /*given Standard data frame identifier is 0x628 */
+        TXB0SIDH = 0xC5;		/* Standard Identifier higher bits D10 to D3 */
+	TXB0SIDL = 0x00;		/* Standard Identifier lower bits D2 TO D0 */
+	TXB0DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+        TXB0D1 = 0xFF;			/* DataByte 1--> Door lock light is enabled */
+	TXB0CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+static void can_tx_2(void) /*function definition*/
+{
+    CANCON = 0x08;/*requests normal mode and transmit buffer 0*/
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB0CONbits.TXREQ == 0 && CANCON == 0x08) 
+    {
+       /*given Standard data frame identifier is 0x628 */
+        TXB0SIDH = 0xC5;		/* Standard Identifier higher bits D10 to D3 */
+	TXB0SIDL = 0x00;		/* Standard Identifier lower bits D2 TO D0 */
+	TXB0DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+	TXB0D1 = 0x00;			/* DataByte 1 --> Door lock light is disabled*/
+	TXB0CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+static void can_tx_3(void) /*function definition*/
+{
+    CANCON = 0x06;/*requests normal mode and transmit buffer 1*/
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB1CONbits.TXREQ == 0 && CANCON == 0x06) 
+    {
+       /*given Standard data frame identifier is 0x153 */
+        TXB1SIDH = 0x2A;		/* Standard Identifier higher bits D10 to D3 */
+	TXB1SIDL = 0x60;		/* Standard Identifier lower bits D2 TO D0 */
+	TXB1DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+	TXB1D1 = 0x00;              /* DataByte 1 */
+        TXB1D5 = 0xFF;                   /* DataByte 5 */
+        TXB1D6 = 0xFF;                  /* DataByte 6 */
+        TXB1D7 = 0xFF;                  /* DataByte 7 */
+        TXB1D0 = 0x00;           /* DataByte 0 */
+        TXB1D2 = 0x00;          /* DataByte 2 */
+        TXB1D3 = 0x00;      /* DataByte 3 */
+        TXB1D4 = 0x00;   /* DataByte 4 */
+        TXB1CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+static void can_tx_4(void) /*function definition*/
+{
+    CANCON = 0x06;/*requests normal mode and transmit buffer 1*/
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB1CONbits.TXREQ == 0 && CANCON == 0x06) 
+    {
+       /*given Standard data frame identifier is 0x153 */
+        TXB1SIDH = 0x2A;		/* Standard Identifier higher bits D10 to D3 */
+	TXB1SIDL = 0x60;		/* Standard Identifier lower bits D2 TO D0 */
+	TXB1DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+        TXB1D1 = 0x01;           /* DataByte 1 */
+	TXB1D5 = 0x00;                  /* DataByte 5 */
+        TXB1D6 = 0x00;                 /* DataByte 6 */
+        TXB1D7 = 0x00;            /* DataByte 7 */
+        TXB1D0 = 0x00;          /* DataByte 0 */
+        TXB1D2 = 0x00;      /* DataByte 2 */
+        TXB1D3 = 0x00;  /* DataByte 3 */
+        TXB1D4 = 0x00;   /* DataByte 4 */
+        TXB1CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+
+static void can_vehicle_speed(void)     /*function definition*/
+{
+   if( can_frame_enm[0] > 5 ) /*Condition checks for the value is greater than 5*/
+    {
+        can_tx_1();       /*function call to transmit data*/
+        PORTDbits.RD4 = ENABLE;       /*Glow the LED*/
+        
+    }
+    else
+    {
+        can_tx_2();           /*function call to transmit data*/
+        PORTDbits.RD4 = DISABLE;   /*Off the LED*/
+   }
+        
+}
+static void can_speed_byte_matching(void) /*function definition*/
+{
+   /*Condition checks if 3 bytes are matching*/
+    if ((can_frame_enm[0] == can_frame_srs[0]) && 
+        (can_frame_enm[1] == can_frame_srs[1]) && 
+        (can_frame_enm[2] == can_frame_srs[2]) )
+    {
+        can_tx_3();  /*function call to transmit data*/
+        PORTDbits.RD5 = DISABLE;  /*Off the LED*/
+    }
+    else
+    { 
+        can_tx_4();      /*function call to transmit data*/
+        PORTDbits.RD5 = ENABLE;  /*Glow the LED*/
+    }
+}
+void __interrupt() ISR1() /*Interrupt Service Routine*/
+{
+    if(PIR3bits.RXB0IF)   /*Condition checks if the receiver flag is set*/
+    {
+        PIR3bits.RXB0IF = DISABLE;    /*clear the receiver flag*/
+        can_rx_1();   /*function call to receive data*/
+        __delay_ms(100);  /*delay of 100 ms*/
+        can_rx_2(); /*function call to receive data*/
+        __delay_ms(100);           /*delay of 100 ms*/
+        /*Condition checks if the received id is 0x042*/
+        if((can_frame_enm[10] == 0x08) && (can_frame_enm[9] == 0x40)) 
+        { 
+            flag_high = ENABLE; /*Set the flag_high variable*/
+            
+        }
+         /*Condition checks if the received id is 0x100*/
+        else if((can_frame_srs[10] == 0x20) && (can_frame_srs[9] == 0x00))
+        {
+            
+            flag_low = ENABLE;     /*Set the flag_high variable*/
+        }   
+        else
+        {
+            can_rx_3(); /*function call to receive data*/
+        }
+  
+        
+    }
+
+}
+
+void main(void)
+{
+     
+    TRISD=0x00;          /*Port D is Configured as output port*/
+    PORTDbits.RD4 = ENABLE;      /*led is initialized to on state*/
+    PORTDbits.RD5 = ENABLE;   /*led is initialized to on state*/
+    can_init();      /*function call to initialize can*/
+    can_rx_init(); /*function call to initialize can receiver buffer 0*/
+   
+    while(1)
+    {
+        if(flag_high == ENABLE) /*Condition checks if the flag_high variable is set*/
+       {
+        can_vehicle_speed(); /*function call to check vehicle speed and change door lock light */
+         __delay_ms(1000); /*delay of 1000 ms*/
+        
+       }
+       if(flag_low == ENABLE)      /*Condition checks if the flag_low variable is set*/
+       {
+         can_speed_byte_matching(); /*function call to check the matching of speed bytes*/
+        __delay_ms(1000); /*delay of 1000 ms*/
+        can_speed_byte_matching(); /*function call to check the matching of speed bytes*/
+        __delay_ms(1000); /*delay of 1000 ms*/
+        can_speed_byte_matching(); /*function call to check the matching of speed bytes*/
+        __delay_ms(1000); /*delay of 1000 ms*/
+       }
+     }  
+}

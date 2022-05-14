@@ -1,0 +1,203 @@
+/*Authors : Arun Kumar, Abhishek V, Kantineni Dinesh, Sharada M V, Yugadharshini B
+ Purpose : To transmit the data to the Wiper and Washer Node (Message ID = 0x701) based on the switch pressed*/
+// PIC18F458 Configuration Bit Settings
+
+// 'C' source line config statements
+
+// CONFIG1H
+#pragma config OSC = HS         // Oscillator Selection bits (HS oscillator)
+#pragma config OSCS = OFF       // Oscillator System Clock Switch Enable bit (Oscillator system clock switch option is disabled (main oscillator is source))
+
+// CONFIG2L
+#pragma config PWRT = OFF       // Power-up Timer Enable bit (PWRT disabled)
+#pragma config BOR = ON         // Brown-out Reset Enable bit (Brown-out Reset enabled)
+#pragma config BORV = 25        // Brown-out Reset Voltage bits (VBOR set to 2.5V)
+
+// CONFIG2H
+#pragma config WDT = OFF        // Watchdog Timer Enable bit (WDT disabled (control is placed on the SWDTEN bit))
+#pragma config WDTPS = 128      // Watchdog Timer Postscale Select bits (1:128)
+
+// CONFIG4L
+#pragma config STVR = ON        // Stack Full/Underflow Reset Enable bit (Stack Full/Underflow will cause Reset)
+#pragma config LVP = ON         // Low-Voltage ICSP Enable bit (Low-Voltage ICSP enabled)
+
+// CONFIG5L
+#pragma config CP0 = OFF        // Code Protection bit (Block 0 (000200-001FFFh) not code protected)
+#pragma config CP1 = OFF        // Code Protection bit (Block 1 (002000-003FFFh) not code protected)
+#pragma config CP2 = OFF        // Code Protection bit (Block 2 (004000-005FFFh) not code protected)
+#pragma config CP3 = OFF        // Code Protection bit (Block 3 (006000-007FFFh) not code protected)
+
+// CONFIG5H
+#pragma config CPB = OFF        // Boot Block Code Protection bit (Boot Block (000000-0001FFh) not code protected)
+#pragma config CPD = OFF        // Data EEPROM Code Protection bit (Data EEPROM not code protected)
+
+// CONFIG6L
+#pragma config WRT0 = OFF       // Write Protection bit (Block 0 (000200-001FFFh) not write protected)
+#pragma config WRT1 = OFF       // Write Protection bit (Block 1 (002000-003FFFh) not write protected)
+#pragma config WRT2 = OFF       // Write Protection bit (Block 2 (004000-005FFFh) not write protected)
+#pragma config WRT3 = OFF       // Write Protection bit (Block 3 (006000-007FFFh) not write protected)
+
+// CONFIG6H
+#pragma config WRTC = OFF       // Configuration Register Write Protection bit (Configuration registers (300000-3000FFh) not write protected)
+#pragma config WRTB = OFF       // Boot Block Write Protection bit (Boot Block (000000-0001FFh) not write protected)
+#pragma config WRTD = OFF       // Data EEPROM Write Protection bit (Data EEPROM not write protected)
+
+// CONFIG7L
+#pragma config EBTR0 = OFF      // Table Read Protection bit (Block 0 (000200-001FFFh) not protected from Table Reads executed in other blocks)
+#pragma config EBTR1 = OFF      // Table Read Protection bit (Block 1 (002000-003FFFh) not protected from Table Reads executed in other blocks)
+#pragma config EBTR2 = OFF      // Table Read Protection bit (Block 2 (004000-005FFFh) not protected from Table Reads executed in other blocks)
+#pragma config EBTR3 = OFF      // Table Read Protection bit (Block 3 (006000-007FFFh) not protected from Table Reads executed in other blocks)
+
+// CONFIG7H
+#pragma config EBTRB = OFF      // Boot Block Table Read Protection bit (Boot Block (000000-0001FFh) not protected from Table Reads executed in other blocks)
+
+// #pragma config statements should precede project file includes.
+// Use project enums instead of #define for ON and OFF.
+#define _XTAL_FREQ 20000000
+#define ENABLE 1
+#define DISABLE 0
+#include <xc.h>
+
+static void can_init(void)  /*function definition*/
+{
+    TRISBbits.RB3 = ENABLE;             /*configured as CAN_RX (input)*/
+    TRISBbits.RB2 = DISABLE;             /*configured as CAN_TX (output)*/
+    CANCON |= 0x80;          /*requests configuration mode*/
+    while(CANSTAT != 0x80);        /*condition checks for configuration mode*/
+    /* Baud rate is 250kHz*/    
+    BRGCON1 = 0xC1;     /*Sync Jump Width = 4;Baud Rate Pre scaler bits = 4*/
+    BRGCON2 = 0xAE;         /*Phase Segment 1 Time = 6, Propagation Time = 7*/
+    BRGCON3 = 0x45;          /*Phase Segment 2 Time = 6*/
+    CIOCON = 0x20;  /*CANTX pin will drive VDD when recessive*/
+    CANCON = 0x08;  /*requests normal mode and transmit buffer 0*/
+}
+static void can_transmit_both_switch_pressed(void) /*function definition*/
+{
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB0CONbits.TXREQ == 0 && CANCON == 0x08) 
+    {
+         /*given Standard data frame identifier is 0x701 */
+        TXB0SIDH = 0xE0;		/* Standard Identifier higher bits D10 to D3 */
+	    TXB0SIDL = 0x20;		/* Standard Identifier lower bits D2 TO D0 */
+	    TXB0DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+	    TXB0D0 = 0x00;			/* DataByte 0  */
+	    TXB0D1 = 0x00;			/* DataByte 1 */
+	    TXB0D2 = 0xFF;			/* DataByte 2 ---> SW3 is pressed*/
+	    TXB0D3 = 0xFF;			/* DataByte 3 ---> SW2 is pressed */
+        TXB0D4 = 0x01;      /* DataByte 4 --> Warning Lamp activated */
+        TXB0D5 = 0x00;/* DataByte 5 */
+        TXB0D6 = 0x00;/* DataByte 6 */
+        TXB0D7 = 0x00;/* DataByte 7 */
+        TXB0CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+static void can_transmit_switch_2_pressed(void) /*function definition*/
+{
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB0CONbits.TXREQ == 0 && CANCON == 0x08) 
+    {
+         /*given Standard data frame identifier is 0x701 */
+        TXB0SIDH = 0xE0;		/* Standard Identifier higher bits D10 to D3 */
+	    TXB0SIDL = 0x20;		/* Standard Identifier lower bits D2 TO D0 */
+	    TXB0DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+	    TXB0D0 = 0x00;			/* DataByte 0  */
+	    TXB0D1 = 0x00;			/* DataByte 1 */
+	    TXB0D2 = 0x00;			/* DataByte 2 */
+	    TXB0D3 = 0xFF;			/* DataByte 3 ---> SW2 is pressed */
+        TXB0D4 = 0x01;      /* DataByte 4 --> Warning Lamp activated */
+        TXB0D5 = 0x00;/* DataByte 5 */
+        TXB0D6 = 0x00;/* DataByte 6 */
+        TXB0D7 = 0x00;/* DataByte 7 */
+        TXB0CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+static void can_transmit_switch_3_pressed(void) /*function definition*/
+{
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB0CONbits.TXREQ == 0 && CANCON == 0x08) 
+    {
+       /*given Standard data frame identifier is 0x701 */
+        TXB0SIDH = 0xE0;		/* Standard Identifier higher bits D10 to D3 */
+	    TXB0SIDL = 0x20;		/* Standard Identifier lower bits D2 TO D0 */
+	    TXB0DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+	    TXB0D0 = 0x00;			/* DataByte 0  */
+	    TXB0D1 = 0x00;			/* DataByte 1 */
+	    TXB0D2 = 0xFF;			/* DataByte 2 ---> SW3 is pressed*/
+	    TXB0D3 = 0x00;			/* DataByte 3*/
+        TXB0D4 = 0x01;      /* DataByte 4 --> Warning Lamp activated */
+        TXB0D5 = 0x00;/* DataByte 5 */
+        TXB0D6 = 0x00;/* DataByte 6 */
+        TXB0D7 = 0x00;/* DataByte 7 */
+        TXB0CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+static void can_transmit_switch_not_pressed(void) /*function definition*/
+{
+    /*Condition checks for Automatically cleared when the message is successfully sent
+     requests normal mode and transmit buffer 0*/
+    if(TXB0CONbits.TXREQ == 0 && CANCON == 0x08) 
+    {
+           /*given Standard data frame identifier is 0x701 */
+        TXB0SIDH = 0xE0;		/* Standard Identifier higher bits D10 to D3 */
+	    TXB0SIDL = 0x20;		/* Standard Identifier lower bits D2 TO D0 */
+	    TXB0DLC = 0x08;			/* Data Length Code    8 bytes of length  */ 
+	    TXB0D0 = 0x00;			/* DataByte 0  */
+	    TXB0D1 = 0x00;			/* DataByte 1 */
+	    TXB0D2 = 0x00;			/* DataByte 2*/
+	    TXB0D3 = 0x00;			/* DataByte 3*/
+        TXB0D4 = 0x00;      /* DataByte 4*/
+        TXB0D5 = 0x00;/* DataByte 5 */
+        TXB0D6 = 0x00;/* DataByte 6 */
+        TXB0D7 = 0x00;/* DataByte 7 */
+        TXB0CON = 0x08;         /*Requests sending a message. Clears the TXABT, TXLARB and TXERR bits. 
+                                                  , Priority Level 0 (lowest priority                            */
+    }
+}
+static void press_switch(void)  /*function definition*/
+{
+    TRISC = 0xFF;                 /*Port C is Configured as input port for switch*/
+    while(1)
+    {
+        /*condition checks if the switch 2 and switch 3  is pressed*/
+        if( (PORTCbits.RC3 == 0) && (PORTCbits.RC4 == 0) )  
+        {
+            can_transmit_both_switch_pressed(); /*function call to transmit message*/
+           
+        }
+        else if (PORTCbits.RC3 == 0) /*condition checks if the switch 2 is pressed*/
+        {
+            can_transmit_switch_2_pressed(); /*function call to transmit message*/
+            
+        }
+        else if (PORTCbits.RC4 == 0) /*condition checks if the switch 3 is pressed*/
+        {
+            can_transmit_switch_3_pressed(); /*function call to transmit message*/
+           
+        }
+        else  /*condition checks if no switch is pressed*/
+        {
+            can_transmit_switch_not_pressed(); /*function call to transmit message*/
+           
+        }
+        __delay_ms(2000);  /* delay for 2000 ms */
+    }
+}
+
+
+
+void main(void)
+{
+    TRISD=0x00;          /*Port D is Configured as output port*/
+    PORTDbits.RD6 = ENABLE;      /*led is initialized to on state*/
+    PORTDbits.RD7 = ENABLE;   /*led is initialized to on state*/
+    can_init();      /*function call to initialize can*/
+    press_switch();      /*function call to monitor the switch */
+}
+
+
